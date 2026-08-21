@@ -29,6 +29,7 @@ func (s *Service) Ingest(c *gin.Context) {
 	})
 	if err != nil {
 		utils.InternalServerError(c, err, "failed to ingest content")
+		return
 	}
 
 	c.JSON(
