@@ -7,11 +7,11 @@ import (
 	"github.com/pgvector/pgvector-go"
 )
 
-func (s *Service) CreateChunk(ctx context.Context, sourceID uint, text string, vectors pgvector.Vector, contentType ContentType) (*Chunk, error) {
+func (s *Service) CreateChunk(ctx context.Context, sourceID uint, text string, vector pgvector.Vector, contentType ContentType) (*Chunk, error) {
 	chunk := &Chunk{
 		SourceID: sourceID,
 		Text:     text,
-		Vectors:  vectors,
+		Vector:   vector,
 		Type:     contentType,
 	}
 
@@ -35,7 +35,7 @@ func (s *Service) FindChunks(ctx context.Context, queryVector []float32) ([]Chun
 	err := s.db.
 		WithContext(ctx).
 		Model(&Chunk{}).
-		Select("*, vectors <=> ? AS distance", vector).
+		Select("*, vector <=> ? AS distance", vector).
 		Order("distance").
 		Limit(config.ChunksPerRequest).
 		Scan(&results).Error

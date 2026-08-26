@@ -25,7 +25,7 @@ func (s *Service) Retrieve(ctx context.Context, query string) ([]ChunkWithScore,
 			Chunk: Chunk{
 				SourceID: r.SourceID,
 				Data:     r.Text,
-				Vectors:  r.Vectors.Slice(),
+				Vector:   r.Vector.Slice(),
 				Type:     r.Type,
 			},
 			Distance: r.Distance,

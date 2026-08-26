@@ -59,11 +59,11 @@ func (s *Service) Embed(ctx context.Context, content string) (Vector, error) {
 			s.embeddingURL, resp.Status, resp.StatusCode, string(respBody))
 	}
 
-	var vectors []Vector
-	err = json.NewDecoder(resp.Body).Decode(&vectors)
+	var vector []Vector
+	err = json.NewDecoder(resp.Body).Decode(&vector)
 	if err != nil {
 		return nil, err
 	}
 
-	return vectors[0], nil
+	return vector[0], nil
 }

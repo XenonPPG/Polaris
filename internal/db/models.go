@@ -26,6 +26,6 @@ type Chunk struct {
 
 	SourceID uint            `gorm:"not null"`
 	Text     string          `gorm:"not null"`
-	Vectors  pgvector.Vector `gorm:"type:vector(768);not null"`
+	Vector   pgvector.Vector `gorm:"type:vector(768);not null"`
 	Type     ContentType     `gorm:"not null"`
 }

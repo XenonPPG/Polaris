@@ -17,7 +17,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 	}
 
 	// vectors
-	chunks, err := s.fillVectors(ctx, splitters.Split(content.Data, content.Type))
+	chunks, err := s.fillVector(ctx, splitters.Split(content.Data, content.Type))
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 		currentData := chunks[0].Data
 
 		for i := 0; i < len(chunks)-1; i++ {
-			similarity := cosineSimilarity(chunks[i].Vectors, chunks[i+1].Vectors)
+			similarity := cosineSimilarity(chunks[i].Vector, chunks[i+1].Vector)
 			//log.Printf("text 1: %s\ntext 2:%s\nsimilarity:%.2f\n\n", chunks[i].Data, chunks[i+1].Data, similarity)
 			if similarity >= config.SimilarityThreshold {
 				currentData += chunks[i+1].Data
@@ -41,24 +41,24 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 		merged = append(merged, Chunk{Data: currentData})
 	}
 
-	// recalculate vectors
+	// recalculate vector
 	mergedParts := make([]string, 0, len(merged))
 	for _, c := range merged {
 		mergedParts = append(mergedParts, c.Data)
 	}
 
-	mergedWithVectors, err := s.fillVectors(ctx, mergedParts)
+	mergedWithVector, err := s.fillVector(ctx, mergedParts)
 	if err != nil {
 		return err
 	}
 
 	// save to db
-	for _, c := range mergedWithVectors {
+	for _, c := range mergedWithVector {
 		if _, err := s.dbService.CreateChunk(
 			ctx,
 			instance.ID,
 			c.Data,
-			pgvector.NewVector(c.Vectors),
+			pgvector.NewVector(c.Vector),
 			content.Type,
 		); err != nil {
 			return err
@@ -68,7 +68,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 	return nil
 }
 
-func (s *Service) fillVectors(ctx context.Context, parts []string) ([]Chunk, error) {
+func (s *Service) fillVector(ctx context.Context, parts []string) ([]Chunk, error) {
 	chunks := make([]Chunk, 0, len(parts))
 	for _, p := range parts {
 		vec, err := s.embeddingService.Embed(ctx, p)
@@ -79,8 +79,8 @@ func (s *Service) fillVectors(ctx context.Context, parts []string) ([]Chunk, err
 			continue
 		}
 		chunks = append(chunks, Chunk{
-			Data:    p,
-			Vectors: vec,
+			Data:   p,
+			Vector: vec,
 		})
 	}
 	return chunks, nil
