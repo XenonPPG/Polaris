@@ -39,3 +39,31 @@ func (s *Service) Ingest(c *gin.Context) {
 		},
 	)
 }
+
+func (s *Service) Retrieve(c *gin.Context) {
+	query := c.Query("query")
+	if len(query) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": "empty query",
+		})
+	}
+
+	retrieved, err := s.mainService.Retrieve(c.Request.Context(), query)
+	if err != nil {
+		utils.InternalServerError(c, err, "failed to retrieve content")
+		return
+	}
+	results := make([]gin.H, 0, len(retrieved))
+	for _, r := range retrieved {
+		results = append(results, gin.H{
+			"source_id":  r.SourceID,
+			"data":       r.Data,
+			"type":       r.Type,
+			"similarity": r.GetSimilarity(),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"results": results,
+	})
+}

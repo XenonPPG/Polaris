@@ -37,6 +37,7 @@ func main() {
 
 	fileRoutes := router.Group("/content")
 	fileRoutes.POST("/ingest", routingService.Ingest)
+	fileRoutes.GET("/retrieve", routingService.Retrieve)
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)

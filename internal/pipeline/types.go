@@ -17,3 +17,12 @@ type Chunk struct {
 	Vectors  embedding.Vector
 	Type     db.ContentType
 }
+
+type ChunkWithScore struct {
+	Chunk
+	Distance float32
+}
+
+func (c ChunkWithScore) GetSimilarity() float32 {
+	return 1 - c.Distance
+}
