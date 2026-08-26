@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/images/logo.svg" width="100"/>
+  <img src=".github/images/logo_colorful.png" width="100"/>
 </p>
 
 # Polaris
@@ -9,12 +9,13 @@ WIP
 ---
 
 ## Поддерживаемый контент
-- WIP
+- Обычный текст
 
 ---
 
 ## Стек
 - Golang
+- GORM
 - PostgreSQL
 - PGVector
 - Gin
@@ -22,4 +23,16 @@ WIP
 ---
 
 ## Деплой
-WIP
+
+1. Клонируйте репозиторий:
+
+```bash
+git clone https://github.com/XenonPPG/Polaris
+cd polaris
+```
+
+2. Запустите проект с помощью Docker Compose:
+
+```bash
+docker compose up
+```
