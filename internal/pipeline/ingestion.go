@@ -17,7 +17,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 	}
 
 	// vectors
-	chunks, err := s.fillVectors(ctx, instance.ID, splitters.Split(content.Data, content.Type))
+	chunks, err := s.fillVectors(ctx, splitters.Split(content.Data, content.Type))
 	if err != nil {
 		return err
 	}
@@ -30,6 +30,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 
 		for i := 0; i < len(chunks)-1; i++ {
 			similarity := cosineSimilarity(chunks[i].Vectors, chunks[i+1].Vectors)
+			//log.Printf("text 1: %s\ntext 2:%s\nsimilarity:%.2f\n\n", chunks[i].Data, chunks[i+1].Data, similarity)
 			if similarity >= config.SimilarityThreshold {
 				currentData += chunks[i+1].Data
 				continue
@@ -46,7 +47,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 		mergedParts = append(mergedParts, c.Data)
 	}
 
-	mergedWithVectors, err := s.fillVectors(ctx, instance.ID, mergedParts)
+	mergedWithVectors, err := s.fillVectors(ctx, mergedParts)
 	if err != nil {
 		return err
 	}
@@ -58,7 +59,7 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 			instance.ID,
 			c.Data,
 			pgvector.NewVector(c.Vectors),
-			c.Type,
+			content.Type,
 		); err != nil {
 			return err
 		}
@@ -67,17 +68,19 @@ func (s *Service) Ingest(ctx context.Context, content Content) error {
 	return nil
 }
 
-func (s *Service) fillVectors(ctx context.Context, sourceID string, parts []string) ([]Chunk, error) {
+func (s *Service) fillVectors(ctx context.Context, parts []string) ([]Chunk, error) {
 	chunks := make([]Chunk, 0, len(parts))
 	for _, p := range parts {
 		vec, err := s.embeddingService.Embed(ctx, p)
 		if err != nil {
 			return nil, err
 		}
+		if vec == nil {
+			continue
+		}
 		chunks = append(chunks, Chunk{
-			SourceID: sourceID,
-			Data:     p,
-			Vectors:  vec,
+			Data:    p,
+			Vectors: vec,
 		})
 	}
 	return chunks, nil

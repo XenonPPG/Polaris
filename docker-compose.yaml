@@ -1,0 +1,50 @@
+services:
+  polaris:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: polaris
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - polaris_postgres
+      - embedding
+
+  polaris_postgres:
+    image: pgvector/pgvector:pg16
+    container_name: polaris_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U polaris_user -d polaris_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:turing-latest
+    container_name: embedding-embeddinggemma
+    ports:
+      - "8081:80"
+    volumes:
+      - ./embedding-data:/data
+    env_file:
+      - .env
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    command: --model-id google/embeddinggemma-300m
+
+volumes:
+  pgdata:

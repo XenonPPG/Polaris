@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose.yaml
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+README.md
+*.md
+
+# IDE and editors
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+/bin/
+/dist/
+
+# Testing
+*.test
+*.prof
+coverage.txt
+coverage.html
+
+# CI/CD
+.github
+
+# Embedding data (volume-mounted)
+embedding-data
+
+# OS
+.DS_Store
+Thumbs.db

@@ -10,7 +10,7 @@ func (s *Service) CreateContent(ctx context.Context, name string, data []byte, c
 		SizeBytes: len(data),
 	}
 
-	_, err := s.db.NewInsert().Model(content).Exec(ctx)
+	err := s.db.WithContext(ctx).Create(content).Error
 	if err != nil {
 		return nil, err
 	}
@@ -18,10 +18,10 @@ func (s *Service) CreateContent(ctx context.Context, name string, data []byte, c
 	return content, nil
 }
 
-func (s *Service) GetContent(ctx context.Context, id string) (*Content, error) {
+func (s *Service) GetContent(ctx context.Context, id uint) (*Content, error) {
 	var content *Content
 
-	_, err := s.db.NewSelect().Model(content).Where("id = ?", id).Exec(ctx)
+	err := s.db.WithContext(ctx).Where("id = ?", id).First(&content).Error
 	if err != nil {
 		return nil, err
 	}
@@ -29,8 +29,8 @@ func (s *Service) GetContent(ctx context.Context, id string) (*Content, error) {
 	return content, nil
 }
 
-func (s *Service) DeleteContent(ctx context.Context, id string) error {
-	_, err := s.db.NewDelete().Model(&Content{}).Where("id = ?", id).Exec(ctx)
+func (s *Service) DeleteContent(ctx context.Context, id uint) error {
+	err := s.db.WithContext(ctx).Where("id = ?", id).Delete(&Content{}).Error
 	if err != nil {
 		return err
 	}

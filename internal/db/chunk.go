@@ -6,7 +6,7 @@ import (
 	"github.com/pgvector/pgvector-go"
 )
 
-func (s *Service) CreateChunk(ctx context.Context, sourceID, text string, vectors pgvector.Vector, contentType ContentType) (*Chunk, error) {
+func (s *Service) CreateChunk(ctx context.Context, sourceID uint, text string, vectors pgvector.Vector, contentType ContentType) (*Chunk, error) {
 	chunk := &Chunk{
 		SourceID: sourceID,
 		Text:     text,
@@ -14,7 +14,7 @@ func (s *Service) CreateChunk(ctx context.Context, sourceID, text string, vector
 		Type:     contentType,
 	}
 
-	_, err := s.db.NewInsert().Model(chunk).Exec(ctx)
+	err := s.db.WithContext(ctx).Create(chunk).Error
 	if err != nil {
 		return nil, err
 	}
@@ -22,10 +22,10 @@ func (s *Service) CreateChunk(ctx context.Context, sourceID, text string, vector
 	return chunk, nil
 }
 
-func (s *Service) GetChunk(ctx context.Context, id string) (*Chunk, error) {
+func (s *Service) GetChunk(ctx context.Context, id uint) (*Chunk, error) {
 	var chunk *Chunk
 
-	_, err := s.db.NewSelect().Model(chunk).Where("id = ?", id).Exec(ctx)
+	err := s.db.WithContext(ctx).Where("id = ?", id).First(&chunk).Error
 	if err != nil {
 		return nil, err
 	}
@@ -33,10 +33,10 @@ func (s *Service) GetChunk(ctx context.Context, id string) (*Chunk, error) {
 	return chunk, nil
 }
 
-func (s *Service) GetChunks(ctx context.Context, sourceID string) ([]Chunk, error) {
+func (s *Service) GetChunks(ctx context.Context, sourceID uint) ([]Chunk, error) {
 	chunks := make([]Chunk, 0)
 
-	_, err := s.db.NewSelect().Model(chunks).Where("source_id = ?", sourceID).Exec(ctx)
+	err := s.db.WithContext(ctx).Where("source_id = ?", sourceID).Find(&chunks).Error
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +44,13 @@ func (s *Service) GetChunks(ctx context.Context, sourceID string) ([]Chunk, erro
 	return chunks, nil
 }
 
-func (s *Service) DeleteChunk(ctx context.Context, id string) error {
-	_, err := s.db.NewDelete().Model(&Chunk{}).Where("id = ?", id).Exec(ctx)
+func (s *Service) DeleteChunk(ctx context.Context, id uint) error {
+	err := s.db.WithContext(ctx).Where("id = ?", id).Delete(&Chunk{}).Error
 	return err
 }
 
-func (s *Service) DeleteChunks(ctx context.Context, sourceID string) error {
-	_, err := s.db.NewDelete().Model(&Chunk{}).Where("source_id = ?", sourceID).Exec(ctx)
+func (s *Service) DeleteChunks(ctx context.Context, sourceID uint) error {
+	err := s.db.WithContext(ctx).Where("source_id = ?", sourceID).Delete(&Chunk{}).Error
 	return err
 
 }

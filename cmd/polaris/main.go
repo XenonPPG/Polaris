@@ -1,23 +1,32 @@
 package main
 
 import (
+	"polaris/internal/config"
 	"polaris/internal/db"
 	"polaris/internal/embedding"
 	"polaris/internal/gateway/controllers"
 	"polaris/internal/pipeline"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// database
-	dbService, err := db.New("TODO")
+	// config
+	cfg, err := config.LoadConfig("./.env")
 	if err != nil {
 		panic(err)
 	}
 
+	// database
+	dbService, err := db.New(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer dbService.Close()
+
 	// embedding
-	embeddingService := embedding.New("TODO", 0)
+	embeddingService := embedding.New(cfg.EmbeddingURL, 10*time.Second)
 
 	// pipeline
 	mainService := pipeline.New(embeddingService, dbService)

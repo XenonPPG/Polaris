@@ -12,7 +12,7 @@ type Content struct {
 }
 
 type Chunk struct {
-	SourceID string
+	SourceID uint
 	Data     string
 	Vectors  embedding.Vector
 	Type     db.ContentType

@@ -2,17 +2,16 @@ package db
 
 import (
 	"github.com/pgvector/pgvector-go"
-	"github.com/uptrace/bun"
+	"gorm.io/gorm"
 )
 
 type Content struct {
-	bun.BaseModel `bun:"table:contents"`
+	gorm.Model
 
-	ID        string      `bun:"id,pk"`
-	Name      string      `bun:"name,notnull"`
-	Data      []byte      `bun:"data,notnull,type:bytea"`
-	Type      ContentType `bun:"type,type:ContentType,notnull"`
-	SizeBytes int         `bun:"size_bytes,notnull"`
+	Name      string      `gorm:"not null;check:char_length(name) BETWEEN 1 AND 60"`
+	Data      []byte      `gorm:"not null"`
+	Type      ContentType `gorm:"not null"`
+	SizeBytes int         `gorm:"not null"`
 }
 
 type ContentType string
@@ -23,11 +22,10 @@ const (
 )
 
 type Chunk struct {
-	bun.BaseModel `bun:"table:chunks"`
+	gorm.Model
 
-	ID       string          `bun:"id,pk,default:gen_random_uuid()"`
-	SourceID string          `bun:"source_id,notnull"`
-	Text     string          `bun:"text,notnull"`
-	Vectors  pgvector.Vector `bun:"embedding,type:vector(768)"`
-	Type     ContentType     `bun:"type,type:ContentType,notnull"`
+	SourceID uint            `gorm:"not null"`
+	Text     string          `gorm:"not null"`
+	Vectors  pgvector.Vector `gorm:"type:vector(768);not null"`
+	Type     ContentType     `gorm:"not null"`
 }
