@@ -11,6 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @title Polaris API
+// @version 0.1
+// @description API Gateway for the Polaris project
+
+// @BasePath /
+// @schemes http https
+
 func main() {
 	// config
 	cfg, err := config.LoadConfig("./.env")
