@@ -35,7 +35,7 @@ func New(cfg config.Config) (service *Service, err error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&Content{}, &Chunk{})
+	err = db.AutoMigrate(&Content{}, &Chunk{}, &Chat{}, &Message{})
 	if err != nil {
 		return nil, err
 	}
