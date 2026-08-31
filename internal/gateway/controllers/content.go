@@ -15,17 +15,6 @@ type IngestRequest struct {
 	Type string `json:"type,omitempty"`
 }
 
-type RetrieveResultItem struct {
-	SourceID   uint    `json:"source_id"`
-	Data       string  `json:"data"`
-	Type       string  `json:"type"`
-	Similarity float32 `json:"similarity"`
-}
-
-type RetrieveResponse struct {
-	Results []RetrieveResultItem `json:"results"`
-}
-
 // Ingest godoc
 // @Summary      Ingest content
 // @Description  Accepts content (name, data, type) and passes it to the processing pipeline for indexing
@@ -60,6 +49,17 @@ func (s *Service) Ingest(c *gin.Context) {
 			"msg": "content ingested successfully",
 		},
 	)
+}
+
+type RetrieveResultItem struct {
+	SourceID   uint    `json:"source_id"`
+	Data       string  `json:"data"`
+	Type       string  `json:"type"`
+	Similarity float32 `json:"similarity"`
+}
+
+type RetrieveResponse struct {
+	Results []RetrieveResultItem `json:"results"`
 }
 
 // Retrieve godoc
