@@ -25,3 +25,7 @@ func BadRequest(c *gin.Context, err error, target string) {
 		},
 	)
 }
+
+func Clamp(value, minVal, maxVal int) int {
+	return min(max(value, minVal), maxVal)
+}

@@ -25,7 +25,7 @@ type IngestRequest struct {
 // @Success      200 {object} map[string]string "content ingested successfully"
 // @Failure      400 {object} map[string]interface{} "Invalid request body"
 // @Failure      500 {object} map[string]interface{} "Failed to ingest content"
-// @Router       /ingest [post]
+// @Router       /content/ingest [post]
 func (s *Service) Ingest(c *gin.Context) {
 	var req IngestRequest
 
@@ -72,7 +72,7 @@ type RetrieveResponse struct {
 // @Success      200 {object} RetrieveResponse
 // @Failure      400 {object} map[string]interface{} "Empty query"
 // @Failure      500 {object} map[string]interface{} "Failed to retrieve content"
-// @Router       /retrieve [get]
+// @Router       /content/retrieve [get]
 func (s *Service) Retrieve(c *gin.Context) {
 	query := c.Query("query")
 	if len(query) == 0 {

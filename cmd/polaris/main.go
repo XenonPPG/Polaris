@@ -40,11 +40,19 @@ func main() {
 
 	// router
 	router := gin.Default()
-	routingService := controllers.NewService(mainService)
+	routingService := controllers.NewService(mainService, dbService)
 
 	fileRoutes := router.Group("/content")
 	fileRoutes.POST("/ingest", routingService.Ingest)
 	fileRoutes.GET("/retrieve", routingService.Retrieve)
+
+	messageRoutes := router.Group("/messages")
+	messageRoutes.POST("/", routingService.CreateMessage)
+
+	chatRoutes := router.Group("/chats")
+	chatRoutes.POST("/", routingService.CreateChat)
+	chatRoutes.GET("/:id", routingService.GetChat)
+	chatRoutes.GET("/", routingService.ListChats)
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)
