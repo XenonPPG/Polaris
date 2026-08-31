@@ -1,21 +1,21 @@
 package pipeline
 
 import (
-	"polaris/internal/db"
 	"polaris/internal/embedding"
+	"polaris/internal/types"
 )
 
 type Content struct {
 	Name string
 	Data []byte
-	Type db.ContentType
+	Type types.ContentType
 }
 
 type Chunk struct {
 	SourceID uint
 	Data     string
 	Vector   embedding.Vector
-	Type     db.ContentType
+	Type     types.ContentType
 }
 
 type ChunkWithScore struct {

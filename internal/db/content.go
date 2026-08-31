@@ -1,8 +1,22 @@
 package db
 
-import "context"
+import (
+	"context"
+	"polaris/internal/types"
 
-func (s *Service) CreateContent(ctx context.Context, name string, data []byte, contentType ContentType) (*Content, error) {
+	"gorm.io/gorm"
+)
+
+type Content struct {
+	gorm.Model
+
+	Name      string            `gorm:"not null;check:char_length(name) BETWEEN 1 AND 60"`
+	Data      []byte            `gorm:"not null"`
+	Type      types.ContentType `gorm:"not null"`
+	SizeBytes int               `gorm:"not null"`
+}
+
+func (s *Service) CreateContent(ctx context.Context, name string, data []byte, contentType types.ContentType) (*Content, error) {
 	content := &Content{
 		Name:      name,
 		Data:      data,

@@ -3,11 +3,22 @@ package db
 import (
 	"context"
 	"polaris/internal/config"
+	"polaris/internal/types"
 
 	"github.com/pgvector/pgvector-go"
+	"gorm.io/gorm"
 )
 
-func (s *Service) CreateChunk(ctx context.Context, sourceID uint, text string, vector pgvector.Vector, contentType ContentType) (*Chunk, error) {
+type Chunk struct {
+	gorm.Model
+
+	SourceID uint              `gorm:"not null"`
+	Text     string            `gorm:"not null"`
+	Vector   pgvector.Vector   `gorm:"type:vector(768);not null"`
+	Type     types.ContentType `gorm:"not null"`
+}
+
+func (s *Service) CreateChunk(ctx context.Context, sourceID uint, text string, vector pgvector.Vector, contentType types.ContentType) (*Chunk, error) {
 	chunk := &Chunk{
 		SourceID: sourceID,
 		Text:     text,

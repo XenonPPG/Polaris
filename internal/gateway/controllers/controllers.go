@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"net/http"
-	"polaris/internal/db"
 	"polaris/internal/gateway/utils"
 	"polaris/internal/pipeline"
+	"polaris/internal/types"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,7 +47,7 @@ func (s *Service) Ingest(c *gin.Context) {
 	err := s.mainService.Ingest(c.Request.Context(), pipeline.Content{
 		Name: req.Name,
 		Data: req.Data,
-		Type: db.ContentType(req.Type),
+		Type: types.ContentType(req.Type),
 	})
 	if err != nil {
 		utils.InternalServerError(c, err, "failed to ingest content")
