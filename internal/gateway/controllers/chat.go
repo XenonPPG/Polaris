@@ -74,7 +74,7 @@ func (s *Service) GetChat(c *gin.Context) {
 }
 
 type ListChatsRequest struct {
-	Offset int `form:"offset" binding:"required"`
+	Offset int `form:"offset"`
 	Limit  int `form:"limit" binding:"required"`
 }
 
