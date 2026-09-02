@@ -8,6 +8,8 @@ import (
 	"polaris/internal/pipeline"
 	"time"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,6 +42,12 @@ func main() {
 
 	// router
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: false,
+	}))
 	routingService := controllers.NewService(mainService, dbService)
 
 	fileRoutes := router.Group("/content")
@@ -47,12 +55,12 @@ func main() {
 	fileRoutes.GET("/retrieve", routingService.Retrieve)
 
 	messageRoutes := router.Group("/messages")
-	messageRoutes.POST("/", routingService.CreateMessage)
+	messageRoutes.POST("", routingService.CreateMessage)
 
 	chatRoutes := router.Group("/chats")
-	chatRoutes.POST("/", routingService.CreateChat)
+	chatRoutes.POST("", routingService.CreateChat)
 	chatRoutes.GET("/:id", routingService.GetChat)
-	chatRoutes.GET("/", routingService.ListChats)
+	chatRoutes.GET("", routingService.ListChats)
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)

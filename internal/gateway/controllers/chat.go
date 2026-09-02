@@ -97,7 +97,7 @@ func (s *Service) ListChats(c *gin.Context) {
 		return
 	}
 
-	chats, err := s.dbService.ListChats(c.Request.Context(), request.Offset, request.Limit)
+	chats, err := s.dbService.ListChats(c.Request.Context(), request.Limit, request.Offset)
 	if err != nil {
 		utils.InternalServerError(c, err, "failed list chats")
 		return
