@@ -41,7 +41,11 @@ func (s *Service) GetChat(ctx context.Context, id uint) (*Chat, error) {
 func (s *Service) ListChats(ctx context.Context, limit, offset int) ([]Chat, error) {
 	chats := make([]Chat, 0)
 
-	limit = utils.Clamp(limit, 1, 100)
+	const maxPerRequest = 100
+	if limit < 0 {
+		limit = maxPerRequest
+	}
+	limit = utils.Clamp(limit, 1, maxPerRequest)
 	offset = max(0, offset)
 	err := s.db.
 		WithContext(ctx).
